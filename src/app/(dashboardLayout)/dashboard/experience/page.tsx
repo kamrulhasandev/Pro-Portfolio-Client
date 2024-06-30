@@ -1,19 +1,50 @@
 "use client";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const Experience = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const axiosSecure = useAxiosSecure();
+  const axiosPublic = useAxiosPublic();
 
-  const onSubmit = (data: any) => {
-    console.log(data); // Handle form submission logic here
-    closeModal(); // Close the modal after form submission
+  const {
+    data: experiences,
+    isLoading,
+    refetch,
+  } = useQuery<any, Error>({
+    queryKey: ["experience"],
+    queryFn: async () => {
+      const response: AxiosResponse<any> = await axiosSecure.get("/experience");
+      return response.data.data;
+    },
+  });
+
+  const onSubmit = async (data: any) => {
+    try {
+      data.isCurrent = data.isCurrent === "true";
+      const res = await axiosSecure.post("/experience/add-experience", data);
+      console.log(res);
+      if (res.status === 200) {
+        reset();
+        refetch();
+        toast.success("Experience added successfully");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    closeModal();
   };
 
   const openModal = () => {
@@ -38,6 +69,82 @@ const Experience = () => {
         </button>
       </div>
 
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="overflow-x-auto mt-10 text-sm">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-black text-white">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  No
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Company Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Designation
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Job Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Job Location
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Start Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  End Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Currently Working
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {experiences.map((experience: any, index: number) => (
+                <tr key={experience.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {index + 1}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {experience.companyName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {experience.designation}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {experience.jobType}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {experience.jobLocation}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {experience.startDate}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {experience.endDate}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {experience.isCurrent ? "Yes" : "No"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button className="bg-black px-2 rounded-md text-white ">Edit</button>{" "}
+                    {/* Placeholder for edit functionality */}
+                    <button className="bg-black px-2 rounded-md text-white">Delete</button>{" "}
+                    {/* Placeholder for delete functionality */}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
           <div className="bg-white p-6 rounded-md shadow-md max-w-xl w-full overflow-y-auto max-h-full">
@@ -46,163 +153,13 @@ const Experience = () => {
             </h2>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="mb-4">
-                  <label
-                    htmlFor="companyName"
-                    className="block font-medium mb-1"
-                  >
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    id="companyName"
-                    {...register("companyName", {
-                      required: "Company Name is required",
-                    })}
-                    className={`w-full border border-black rounded-md px-3 py-2 focus:outline-none ${
-                      errors.companyName ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="companyLocation"
-                    className="block font-medium mb-1"
-                  >
-                    Company Location
-                  </label>
-                  <input
-                    type="text"
-                    id="companyLocation"
-                    {...register("companyLocation", {
-                      required: "Company Location is required",
-                    })}
-                    className={`w-full border border-black rounded-md px-3 py-2 focus:outline-none ${
-                      errors.companyLocation
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="designation"
-                    className="block font-medium mb-1"
-                  >
-                    Designation
-                  </label>
-                  <input
-                    type="text"
-                    id="designation"
-                    {...register("designation", {
-                      required: "Designation is required",
-                    })}
-                    className={`w-full border border-black rounded-md px-3 py-2 focus:outline-none ${
-                      errors.designation ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="jobType" className="block font-medium mb-1">
-                    Job Type
-                  </label>
-                  <select
-                    id="jobType"
-                    {...register("jobType", {
-                      required: "Please select a Job Type",
-                    })}
-                    className={`w-full border border-black rounded-md px-3 py-2 focus:outline-none ${
-                      errors.jobType ? "border-red-500" : "border-gray-300"
-                    }`}
-                  >
-                    <option value="">Select Job Type</option>
-                    <option value="FULLTIME">Full Time</option>
-                    <option value="PARTTIME">Part Time</option>
-                    <option value="CONTRACT">Contract</option>
-                    <option value="FREELANCE">Freelance</option>
-                  </select>
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="jobLocation"
-                    className="block font-medium mb-1"
-                  >
-                    Job Location
-                  </label>
-                  <input
-                    type="text"
-                    id="jobLocation"
-                    {...register("jobLocation", {
-                      required: "Job Location is required",
-                    })}
-                    className={`w-full border border-black rounded-md px-3 py-2 focus:outline-none ${
-                      errors.jobLocation ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="startDate" className="block font-medium mb-1">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    id="startDate"
-                    {...register("startDate", {
-                      required: "Start Date is required",
-                    })}
-                    className={`w-full border border-black rounded-md px-3 py-2 focus:outline-none ${
-                      errors.startDate ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="endDate" className="block font-medium mb-1">
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    id="endDate"
-                    {...register("endDate")}
-                    className={`w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none `}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="isCurrent" className="block font-medium mb-1">
-                    Currently Working Here
-                  </label>
-                  <select
-                    id="isCurrent"
-                    {...register("isCurrent")}
-                    className={
-                      "w-full border border-gray-300 rounded-md px-3 py-[10px] focus:outline-none "
-                    }
-                  >
-                    <option value="">Select Option</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                  </select>
-                </div>
+                {/* Form fields */}
               </div>
-              <div className="mb-4">
-                <label htmlFor="description" className="block font-medium mb-1">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  {...register("description", {
-                    required: "Description is required",
-                  })}
-                  rows={3}
-                  className={`w-full border border-black rounded-md px-3 py-2 focus:outline-none ${
-                    errors.description ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-              </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2 mt-4">
                 <button
                   type="submit"
                   className="bg-black text-white px-4 py-1 rounded-md border border-black 
-               transition-all duration-300 ease-in-out hover:bg-transparent hover:text-black"
+                   transition-all duration-300 ease-in-out hover:bg-transparent hover:text-black"
                 >
                   Save
                 </button>
@@ -210,7 +167,7 @@ const Experience = () => {
                   type="button"
                   onClick={closeModal}
                   className="bg-black text-white px-4 py-1 rounded-md border border-black 
-               transition-all duration-300 ease-in-out hover:bg-transparent hover:text-black"
+                   transition-all duration-300 ease-in-out hover:bg-transparent hover:text-black"
                 >
                   Cancel
                 </button>

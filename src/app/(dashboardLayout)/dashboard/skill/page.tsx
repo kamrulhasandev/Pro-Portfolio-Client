@@ -1,9 +1,11 @@
-"use client";
 
+
+"use client";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
+import Image from "next/image";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -21,15 +23,17 @@ const Skill = () => {
   const imgbb_key = process.env.NEXT_PUBLIC_IMGBB_API;
   const imgbbUrl = `https://api.imgbb.com/1/upload?&key=${imgbb_key}`;
 
-  const { data: skills, isLoading , refetch } = useQuery<any, Error>({
+  const {
+    data: skills,
+    isLoading,
+    refetch,
+  } = useQuery<any, Error>({
     queryKey: ["skill"],
     queryFn: async () => {
       const response: AxiosResponse<any> = await axiosSecure.get("/skill");
       return response.data.data;
     },
   });
-
-  console.log(skills);
 
   const onSubmit = async (data: any) => {
     try {
@@ -54,7 +58,6 @@ const Skill = () => {
           "/skill/add-skill",
           newSkill
         );
-        console.log(newSkill);
 
         if (response.status === 200) {
           toast.success("Skill added successfully");
@@ -66,7 +69,7 @@ const Skill = () => {
         throw new Error("Failed to upload image");
       }
     } catch (error) {
-      console.log( error);
+      console.log(error);
       toast.error("Failed to add skill");
     } finally {
       refetch();
@@ -83,7 +86,7 @@ const Skill = () => {
   };
 
   return (
-    <div>
+    <div className="">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Skills</h1>
 
@@ -94,6 +97,47 @@ const Skill = () => {
         >
           Add Skill
         </button>
+      </div>
+
+      <div className=" text-sm mt-10">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-black text-white">
+            <tr className="border-b border-gray-300">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">No</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Icon</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Category</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Level</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Action</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {skills?.map((skill: any, index: number) => (
+              <tr key={skill.id} className="border-b border-gray-300 hover:bg-slate-50">
+                <td className="px-6 py-1 whitespace-nowrap">{index + 1}</td>
+                <td className="px-6 py-1 whitespace-nowrap">{skill.name}</td>
+                <td className="px-6 py-1 whitespace-nowrap">
+                  <div className="px-6 py-1 whitespace-nowrap">
+                    <Image
+                      src={skill.icon}
+                      alt={skill.name}
+                      width={50}
+                      height={50}
+                      className="rounded-full"
+                    />
+                  </div>
+                </td>
+                <td className="px-6 py-1 whitespace-nowrap">{skill.category}</td>
+                <td className="px-6 py-1 whitespace-nowrap">{skill.level}</td>
+                <td className="px-6 py-1 whitespace-nowrap">
+                  <button className="bg-black px-2 rounded-md text-white">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {isModalOpen && (
