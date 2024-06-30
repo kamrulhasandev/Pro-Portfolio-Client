@@ -2,10 +2,11 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { AiFillCode } from "react-icons/ai";
 
 const HeroSection = () => {
   return (
-    <div className="relative min-h-screen flex justify-center items-center">
+    <div className="relative min-h-[calc(100vh-56px)] flex justify-center items-center">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -41,6 +42,9 @@ const HeroSection = () => {
                 className="rounded-full"
               />
             </div>
+            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-30">
+            <AiFillCode size={50} className="text-white" />
+          </div>
           </div>
         </div>
 

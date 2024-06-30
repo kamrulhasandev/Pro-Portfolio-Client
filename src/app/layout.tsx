@@ -20,7 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Toaster position="bottom-right" />
-        {/* <Navbar /> */}
+        <div className="sticky top-0 z-50 bg-[#121120] bg-opacity-5 backdrop-filter backdrop-blur-lg backdrop-saturate-150 shadow-md">
+          <Navbar />
+        </div>
         {children}
       </body>
     </html>
