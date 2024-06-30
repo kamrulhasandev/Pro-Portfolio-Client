@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   MdSpaceDashboard,
   MdWork,
@@ -12,12 +12,24 @@ import {
   MdHome,
   MdMenu,
   MdClose,
-  MdAdd,
 } from "react-icons/md";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const path = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      router.push("/login");
+    }
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    router.push("/login");
+  };
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -117,7 +129,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               Home
             </li>
           </Link>
-          <button>
+          <button onClick={handleLogout}>
             <li
               className={`flex items-center gap-2 border border-transparent px-3 py-1 rounded-md hover:bg-white hover:border-slate-200`}
             >
