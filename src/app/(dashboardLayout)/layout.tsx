@@ -13,11 +13,13 @@ import {
   MdMenu,
   MdClose,
 } from "react-icons/md";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const path = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -145,7 +147,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <h1 className="text-xl font-semibold text-center">Control Panel</h1>
         </header>
 
-        <div className="p-6">{children}</div>
+        <div className="p-6">
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </div>
       </main>
     </div>
   );

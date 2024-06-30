@@ -1,19 +1,77 @@
 "use client";
 
+import useAxiosPublic from "@/hooks/useAxiosPublic";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const Skill = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
+  const imgbb_key = process.env.NEXT_PUBLIC_IMGBB_API;
+  const imgbbUrl = `https://api.imgbb.com/1/upload?&key=${imgbb_key}`;
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    closeModal();
+  const { data: skills, isLoading , refetch } = useQuery<any, Error>({
+    queryKey: ["skill"],
+    queryFn: async () => {
+      const response: AxiosResponse<any> = await axiosSecure.get("/skill");
+      return response.data.data;
+    },
+  });
+
+  console.log(skills);
+
+  const onSubmit = async (data: any) => {
+    try {
+      const imageFile = {
+        image: data.icon[0],
+      };
+
+      const imgRes = await axiosPublic.post(imgbbUrl, imageFile, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (imgRes.status === 200) {
+        const imgUrl = imgRes.data.data.display_url;
+        const newSkill = {
+          ...data,
+          icon: imgUrl,
+        };
+
+        const response: AxiosResponse<any> = await axiosSecure.post(
+          "/skill/add-skill",
+          newSkill
+        );
+        console.log(newSkill);
+
+        if (response.status === 200) {
+          toast.success("Skill added successfully");
+          reset();
+        } else {
+          throw new Error("Failed to add skill");
+        }
+      } else {
+        throw new Error("Failed to upload image");
+      }
+    } catch (error) {
+      console.log( error);
+      toast.error("Failed to add skill");
+    } finally {
+      refetch();
+      closeModal();
+    }
   };
 
   const openModal = () => {
