@@ -12,13 +12,13 @@ const ProjectSection = async () => {
     });
     const { data } = await res.json();
     projects = data;
-    console.log(projects);
+   
   } catch (error) {
     console.log(error);
   }
 
   return (
-    <div className="relative min-h-[100vh] py-20">
+    <div className="relative min-h-screen">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -32,11 +32,11 @@ const ProjectSection = async () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-screen-xl mx-auto px-2 pt-10">
+      <div className="relative z-10 max-w-screen-xl mx-auto px-2 py-20">
         <h1 className="text-2xl font-bold text-center text-white mb-2">
           Get to Know My Projects
         </h1>
-        <p className="text-sm text-center mb-8 text-gray-400">
+        <p className="text-sm text-center mb-14 text-gray-400">
           Showcasing My Web Development Projects
         </p>
 
@@ -70,22 +70,22 @@ const ProjectSection = async () => {
               </div>
               <div>
                 <div className="flex gap-3 mt-2">
-                  <Link href={project.link} className="flex gap-1 items-center">
+                  <Link href={project.link} className="flex gap-1 items-center hover:text-purple-500">
                     <TbWorldShare /> Live
                   </Link>
                   <Link
                     href={project?.githubServer}
-                    className="flex gap-1 items-center"
+                    className="flex gap-1 items-center hover:text-purple-500"
                   >
                     <FaGithub /> Server
                   </Link>
                   <Link
                     href={project?.githubClient}
-                    className="flex gap-1 items-center"
+                    className="flex gap-1 items-center hover:text-purple-500"
                   >
                     <FaGithub /> Client
                   </Link>
-                  <Link className="flex gap-1 items-center" href={project.link}>
+                  <Link className="flex gap-1 items-center hover:text-purple-500" href={project.link}>
                     <CiLocationArrow1 /> Details
                   </Link>
                 </div>

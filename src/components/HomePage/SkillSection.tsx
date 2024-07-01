@@ -9,7 +9,7 @@ const SkillSection = async () => {
     });
     const { data } = await res.json();
     skills = data;
-    console.log(skills);
+   
   } catch (error) {
     console.log(error);
   }
