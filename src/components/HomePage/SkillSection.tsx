@@ -4,7 +4,7 @@ const SkillSection = async () => {
   let skills = [];
 
   try {
-    const res = await fetch("http://localhost:5000/api/skill", {
+    const res = await fetch("https://pro-portfolio-server.vercel.app/api/skill", {
       next: { revalidate: 30 },
     });
     const { data } = await res.json();

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://pro-portfolio-server.vercel.app/api",
 });
 const useAxiosSecure = () => {
   const router = useRouter();

@@ -2,7 +2,7 @@ const ExperienceSection = async () => {
   let experience = [];
 
   try {
-    const res = await fetch("http://localhost:5000/api/experience", {
+    const res = await fetch("https://pro-portfolio-server.vercel.app/api/experience", {
       next: { revalidate: 30 },
     });
     const { data } = await res.json();

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosPublic = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://pro-portfolio-server.vercel.app/api",
 });
 
 const useAxiosPublic = () => {

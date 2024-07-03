@@ -8,9 +8,7 @@ const CommonLayout = ({ children }: { children: React.ReactNode }) => {
         <Navbar />
       </div>
       {children}
-      
-        <Footer />
-    
+      <Footer />
     </div>
   );
 };

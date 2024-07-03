@@ -1,8 +1,10 @@
+'use client';
 import Image from "next/image";
 import Link from "next/link";
 import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
   return (
     <footer className="bg-[#121120]">
       <div className="max-w-screen-xl mx-auto py-10 px-5">
@@ -46,7 +48,7 @@ const Footer = () => {
           </div>
         </div>
         <p className="text-gray-400 text-center text-sm mt-5">
-          &copy; 2023 Kamrul Hasan. All rights reserved.
+          &copy; {currentYear} Kamrul Hasan. All rights reserved.
         </p>
       </div>
     </footer>

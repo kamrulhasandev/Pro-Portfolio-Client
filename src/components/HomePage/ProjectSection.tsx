@@ -7,7 +7,7 @@ const ProjectSection = async () => {
   let projects = [];
 
   try {
-    const res = await fetch("http://localhost:5000/api/project", {
+    const res = await fetch("https://pro-portfolio-server.vercel.app/api/project", {
       next: { revalidate: 30 },
     });
     const { data } = await res.json();
